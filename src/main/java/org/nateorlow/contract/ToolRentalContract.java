@@ -18,7 +18,11 @@ import java.util.List;
 /**
  * This class contains data for creating a rental contract
  * It can be passed into a ContractPrinter to output
+ *
+ * If objects are not present to print, this section will simply not print anything
+ * If computation objects are not configured, this will throw an IllegalStateException
  */
+
 @Builder
 public class ToolRentalContract implements Contract {
     Tool tool;
@@ -50,12 +54,18 @@ public class ToolRentalContract implements Contract {
     }
 
     void printToolSectionToList(List<String> outputList){
+        if(tool == null){
+            return;
+        }
         outputList.add("Tool code: " + tool.getCode());
         outputList.add("Tool type: " + tool.getType());
         outputList.add("Tool brand: " + tool.getBrand());
     }
 
     void printDateSectionToList(List<String> outputList){
+        if(rentalPeriod == null){
+            return;
+        }
         outputList.add("Rental days: " + rentalPeriod.getRentalDayCount());
         outputList.add("Check out date: " + rentalPeriod.getStartDate().format(MDY_FORMATTER));
         outputList.add("Due date: " + rentalPeriod.getEndDate().format(MDY_FORMATTER));
@@ -67,8 +77,13 @@ public class ToolRentalContract implements Contract {
      * @param outputList List of lines representing the charge section of this contract
      */
     void printChargeSectionToList(List<String> outputList){
+        if(rentalPeriod == null || chargeListing == null){
+            return;
+        }else if(chargeableDayCounter == null || chargeCalculator == null){
+            throw new IllegalStateException("System error - No configured day counter or charge calculator");
+        }
         final int chargeableDays = chargeableDayCounter.chargeableDaysForListing(rentalPeriod, chargeListing);
-        final BigDecimal baseCharge = chargeCalculator.calculateBaseCharge(rentalPeriod, chargeableDays, chargeListing)
+        final BigDecimal baseCharge = chargeCalculator.calculateBaseCharge(chargeableDays, chargeListing)
                                                       .setScale(ROUND_TO_PLACES, HALF_UP);
         final BigDecimal discountCharge = chargeCalculator.calculateDiscountCharge(baseCharge, discountPercent)
                                                           .setScale(ROUND_TO_PLACES, HALF_UP);

@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckoutTotalTest {
         Checkout checkout;
         LogContractPrinter contractPrinterSpy; //will be used to view the output
+
     @BeforeEach
     void setUp() {
         Inventory inventory = new Inventory();
@@ -49,6 +50,7 @@ class CheckoutTotalTest {
         assertTrue(exceptionThrown.getMessage().contains("Discount percentage"));
     }
 
+    //Check that the calls of outputToLog match the expected calls
     void verifyContractPrinterLines(String[] expectedOutput){
         for(String outputLine : expectedOutput) {
             Mockito.verify(contractPrinterSpy).outputToLog(outputLine);
@@ -180,7 +182,7 @@ class CheckoutTotalTest {
     }
 
     @Test
-    void validateInputArgumentsDiscount() {
+    void testValidateInputArgumentsDiscount() {
         final String validToolCode = "LADW";
         final String validDate = "4/4/14";
         final int validDiscount = 50;
@@ -192,11 +194,12 @@ class CheckoutTotalTest {
         assertTrue(exceptionThrown.getMessage().contains("Rental day count"));
         exceptionThrown = assertThrows(IllegalArgumentException.class,
                 () -> checkout.validateInputArguments(validToolCode, validRentalDays, -1, validDate),
-                "0 should be an invalid rental days");
+                "Discount percentage should be between 0 and 100");
         assertTrue(exceptionThrown.getMessage().contains("Discount percentage"));
     }
 
-    //This data might normally be in a database
+
+    //This data is used for setting up unit tests
     private static void addSampleChargeListings(ChargeCalculator unroundedChargeCalculator) {
         final ChargeListing ladderChargeListing = ChargeListing.builder().toolType(Tool.LADDER)
                                                                .dailyCharge(new BigDecimal("1.99"))
@@ -212,7 +215,7 @@ class CheckoutTotalTest {
         unroundedChargeCalculator.addChargeListing(jackhammerChargeListing);
     }
 
-    //This data might normally be in a database
+    //This data is used for setting up unit tests
     private static void addSampleTools(Inventory inventory) {
         final Tool chainsaw = Tool.builder().code("CHNS").type(Tool.CHAINSAW).brand("Stihl").build();
         inventory.addTool(chainsaw);

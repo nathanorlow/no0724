@@ -27,17 +27,16 @@ class UnroundedChargeCalculatorTest {
 
     @Test
     void calculateBaseCharge() {
-        final RentalPeriod twoDays = new RentalPeriod("1/1/24", 2);
         final ChargeListing threeFiftyChargeListing =
                 ChargeListing.builder().toolType("threefifty").dailyCharge(new BigDecimal("3.50")).build();
         final ChargeListing oneNinetyNineChargeListing =
                 ChargeListing.builder().toolType("oneninetynine").dailyCharge(new BigDecimal("1.99")).build();
 
         assertEquals(new BigDecimal("7.00"),
-                unroundedChargeCalculator.calculateBaseCharge(twoDays, 2, threeFiftyChargeListing));
+                unroundedChargeCalculator.calculateBaseCharge(2, threeFiftyChargeListing));
 
         assertEquals(new BigDecimal("3.98"),
-                unroundedChargeCalculator.calculateBaseCharge(twoDays, 2, oneNinetyNineChargeListing));
+                unroundedChargeCalculator.calculateBaseCharge(2, oneNinetyNineChargeListing));
     }
 
     @Test

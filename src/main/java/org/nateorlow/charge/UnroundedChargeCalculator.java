@@ -27,7 +27,10 @@ public class UnroundedChargeCalculator implements ChargeCalculator {
     }
 
     @Override
-    public BigDecimal calculateBaseCharge(RentalPeriod rentalPeriod, int chargeableDays, ChargeListing chargeListing){
+    public BigDecimal calculateBaseCharge(int chargeableDays, ChargeListing chargeListing){
+        if(chargeListing == null || chargeListing.getDailyCharge() == null){
+            throw new IllegalStateException("System error -- need charge listing to compute base charge");
+        }
         return chargeListing.getDailyCharge().multiply(new BigDecimal(chargeableDays));
     }
 

@@ -6,7 +6,7 @@ public interface ChargeCalculator {
     void addChargeListing(ChargeListing chargeListing);
     ChargeListing lookupChargeListingByToolType(String toolType);
 
-    BigDecimal calculateBaseCharge(RentalPeriod rentalPeriod, int chargeableDays, ChargeListing chargeListing);
+    BigDecimal calculateBaseCharge(int chargeableDays, ChargeListing chargeListing);
 
     BigDecimal calculateDiscountCharge(BigDecimal baseCharge, int discountPercentage);
 }

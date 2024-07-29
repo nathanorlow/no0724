@@ -4,6 +4,13 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 
+/**
+ * Contains methods for counting chargeable days,
+ * as well as what counts as chargeable based on holiday policy
+ *
+ * The main public facing method checks for null inputs
+ */
+
 public class HolidayChargeableDayCounter implements ChargeableDayCounter {
 
     /**
@@ -13,8 +20,14 @@ public class HolidayChargeableDayCounter implements ChargeableDayCounter {
      * @param chargeListing Policy for determining what is chargeable
      * @return number of chargeable days
      */
+
     @Override
     public Integer chargeableDaysForListing(RentalPeriod rentalPeriod, ChargeListing chargeListing){
+        if(rentalPeriod == null || rentalPeriod.getRentalDayCount() == null || rentalPeriod.getFirstChargeDate() == null){
+            throw new IllegalStateException("System error -- missing rental period data to calculate chargeable days)");
+        }else if(chargeListing == null){
+            throw new IllegalStateException("System error -- Unable to compute chargeable days without charge listing policy");
+        }
         int chargeableDays = 0;
         for(int daysElapsed = 0; daysElapsed < rentalPeriod.getRentalDayCount(); daysElapsed++){
             LocalDate checkDate = rentalPeriod.getFirstChargeDate().plusDays(daysElapsed);
